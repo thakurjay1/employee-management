@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb
+      - SPRING_DATASOURCE_DRIVER_CLASSNAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  db:
+    image: oscarfonts/h2
+    container_name: h2-db
+    ports:
+      - "9092:9092"
+    networks:
+      - app-network
+    environment:
+      - H2_OPTIONS=-ifNotExists
+
+networks:
+  app-network:
+    driver: bridge
